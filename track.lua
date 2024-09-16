@@ -23,9 +23,9 @@ local function getPlayerStats()
     return stats
 end
 
--- Function to send stats to Discord webhook
-local function sendToDiscord(stats)
-    local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
+-- Function to send stats to proxy server
+local function sendToProxy(stats)
+    local proxyUrl = "http://127.0.0.1:5000/webhook"
     local data = {
         ["content"] = "Player Information",
         ["embeds"] = {{
@@ -42,14 +42,14 @@ local function sendToDiscord(stats)
 
     local jsonData = game:GetService("HttpService"):JSONEncode(data)
     local success, response = pcall(function()
-        return game:GetService("HttpService"):PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+        return game:GetService("HttpService"):PostAsync(proxyUrl, jsonData, Enum.HttpContentType.ApplicationJson)
     end)
 
     if not success then
-        warn("Failed to send data to Discord: " .. response)
+        warn("Failed to send data to proxy: " .. response)
     end
 end
 
 -- Main execution
 local stats = getPlayerStats()
-sendToDiscord(stats)
+sendToProxy(stats)
