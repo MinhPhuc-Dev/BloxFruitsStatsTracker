@@ -40,9 +40,11 @@ local function saveStatsToFile(stats)
     end
 
     local jsonData = game:GetService("HttpService"):JSONEncode(stats)
-    local file, err = io.open(fileName, "w")
+    local file, err = pcall(function()
+        return io.open(fileName, "w")
+    end)
     if not file then
-        warn("Không thể mở tệp để ghi: " .. err)
+        warn("Không thể mở tệp để ghi: " .. tostring(err))
         return nil
     end
 
@@ -60,9 +62,11 @@ local function sendFileToWebhook(fileName)
     end
 
     local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
-    local file, err = io.open(fileName, "r")
+    local file, err = pcall(function()
+        return io.open(fileName, "r")
+    end)
     if not file then
-        warn("Không thể mở tệp để đọc: " .. err)
+        warn("Không thể mở tệp để đọc: " .. tostring(err))
         return
     end
 
@@ -95,3 +99,4 @@ if fileName then
 else
     warn("Không thể lưu thông tin người chơi vào tệp")
 end
+
