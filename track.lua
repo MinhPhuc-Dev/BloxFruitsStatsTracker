@@ -84,4 +84,8 @@ end
 -- Thực thi chính
 local stats = getPlayerStats()
 local fileName = saveStatsToFile(stats)
-sendFileToWebhook(fileName)
+if fileName then
+    sendFileToWebhook(fileName)
+else
+    warn("Không thể lưu thông tin người chơi vào tệp")
+end
