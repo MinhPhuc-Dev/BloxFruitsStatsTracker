@@ -33,7 +33,7 @@ local function saveStatsToFile(stats)
         makefolder(folderName)
     end
 
-    local file = io.open(fileName, "w")
+    local file, err = io.open(fileName, "w")
     if file then
         file:write("Account Name: " .. stats.AccountName .. "\n")
         file:write("Level: " .. stats.Level .. "\n")
@@ -42,7 +42,7 @@ local function saveStatsToFile(stats)
         file:write("Fruit Inventory: " .. table.concat(stats.FruitInventory, ", ") .. "\n")
         file:close()
     else
-        warn("Failed to open file for writing")
+        warn("Failed to open file for writing: " .. err)
     end
     return fileName
 end
@@ -50,7 +50,7 @@ end
 -- Function to send file contents to webhook
 local function sendFileToWebhook(fileName)
     local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
-    local file = io.open(fileName, "r")
+    local file, err = io.open(fileName, "r")
     if file then
         local content = file:read("*all")
         file:close()
@@ -72,7 +72,7 @@ local function sendFileToWebhook(fileName)
             warn("Failed to send data to webhook: " .. response)
         end
     else
-        warn("Failed to open file for reading")
+        warn("Failed to open file for reading: " .. err)
     end
 end
 
