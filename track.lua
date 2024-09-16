@@ -11,7 +11,7 @@ local function getPlayerStats()
         FruitInventory = {}
     }
 
-    -- Get fruit inventory if it exists
+    -- Get fruit inventory if available
     if player:FindFirstChild("Data") and player.Data:FindFirstChild("FruitInventory") then
         for _, fruit in pairs(player.Data.FruitInventory:GetChildren()) do
             table.insert(stats.FruitInventory, fruit.Name)
@@ -27,9 +27,9 @@ end
 local function sendToDiscord(stats)
     local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
     local data = {
-        ["content"] = "Player Stats",
+        ["content"] = "Player Information",
         ["embeds"] = {{
-            ["title"] = "Blox Fruits Stats",
+            ["title"] = "Blox Fruits Info",
             ["fields"] = {
                 {["name"] = "Account Name", ["value"] = stats.AccountName, ["inline"] = true},
                 {["name"] = "Level", ["value"] = stats.Level, ["inline"] = true},
@@ -41,7 +41,13 @@ local function sendToDiscord(stats)
     }
 
     local jsonData = game:GetService("HttpService"):JSONEncode(data)
-    game:GetService("HttpService"):PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+    local success, response = pcall(function()
+        return game:GetService("HttpService"):PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+    end)
+
+    if not success then
+        warn("Failed to send data to Discord: " .. response)
+    end
 end
 
 -- Main execution
