@@ -1,4 +1,24 @@
--- Đảm bảo Fluxus Executor đang mở và kết nối với Roblox
+local json = require("json")
+
+-- Hàm đọc tệp JSON
+local function readJsonFile(filePath)
+    local file, err = io.open(filePath, "r")
+    if not file then
+        warn("Không thể mở tệp: " .. err)
+        return nil
+    end
+
+    local content = file:read("*all")
+    file:close()
+
+    local data, pos, err = json.decode(content, 1, nil)
+    if err then
+        warn("Lỗi khi phân tích tệp JSON: " .. err)
+        return nil
+    end
+
+    return data
+end
 
 -- Hàm lấy thông tin người chơi
 local function getPlayerStats()
@@ -98,4 +118,16 @@ if fileName then
     sendFileToWebhook(fileName)
 else
     warn("Không thể lưu thông tin người chơi vào tệp")
+end
+
+-- Đọc tệp JSON
+local filePath = "/storage/emulated/0/MPhuc_stat/" .. stats.AccountName .. ".json"
+local data = readJsonFile(filePath)
+if data then
+    print("Dữ liệu từ tệp JSON:")
+    for k, v in pairs(data) do
+        print(k, v)
+    end
+else
+    warn("Không thể đọc tệp JSON")
 end
