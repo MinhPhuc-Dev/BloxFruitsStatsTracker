@@ -4,7 +4,7 @@ local HttpService = game:GetService("HttpService")
 local function readJsonFile(filePath)
     local file, err = io.open(filePath, "r")
     if not file then
-        warn("Không thể mở tệp: " .. err)
+        warn("Không thể mở tệp để đọc: " .. err)
         return nil
     end
 
