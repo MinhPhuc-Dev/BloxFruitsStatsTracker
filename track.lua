@@ -11,8 +11,10 @@ local function readJsonFile(filePath)
     local content = file:read("*all")
     file:close()
 
-    local data, pos, err = HttpService:JSONDecode(content)
-    if err then
+    local data, pos, err = pcall(function()
+        return HttpService:JSONDecode(content)
+    end)
+    if not data then
         warn("Lỗi khi phân tích tệp JSON: " .. err)
         return nil
     end
@@ -60,7 +62,9 @@ local function saveStatsToFile(stats)
     end
 
     local jsonData = HttpService:JSONEncode(stats)
-    local file, err = io.open(fileName, "w")
+    local file, err = pcall(function()
+        return io.open(fileName, "w")
+    end)
     if not file then
         warn("Không thể mở tệp để ghi: " .. tostring(err))
         return nil
@@ -80,7 +84,9 @@ local function sendFileToWebhook(fileName)
     end
 
     local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
-    local file, err = io.open(fileName, "r")
+    local file, err = pcall(function()
+        return io.open(fileName, "r")
+    end)
     if not file then
         warn("Không thể mở tệp để đọc: " .. tostring(err))
         return
