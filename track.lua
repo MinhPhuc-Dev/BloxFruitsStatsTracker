@@ -5,15 +5,19 @@ local function getPlayerStats()
     local player = game.Players.LocalPlayer
     local stats = {
         AccountName = player.Name,
-        Level = player.Data.Level.Value,
-        Money = player.Data.Beli.Value,
-        Fragments = player.Data.Fragments.Value,
+        Level = player:FindFirstChild("Data") and player.Data:FindFirstChild("Level") and player.Data.Level.Value or "N/A",
+        Money = player:FindFirstChild("Data") and player.Data:FindFirstChild("Beli") and player.Data.Beli.Value or "N/A",
+        Fragments = player:FindFirstChild("Data") and player.Data:FindFirstChild("Fragments") and player.Data.Fragments.Value or "N/A",
         FruitInventory = {}
     }
 
-    -- Get fruit inventory
-    for _, fruit in pairs(player.Data.FruitInventory:GetChildren()) do
-        table.insert(stats.FruitInventory, fruit.Name)
+    -- Get fruit inventory if it exists
+    if player:FindFirstChild("Data") and player.Data:FindFirstChild("FruitInventory") then
+        for _, fruit in pairs(player.Data.FruitInventory:GetChildren()) do
+            table.insert(stats.FruitInventory, fruit.Name)
+        end
+    else
+        stats.FruitInventory = {"No fruits found"}
     end
 
     return stats
