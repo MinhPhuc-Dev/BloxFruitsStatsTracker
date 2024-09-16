@@ -62,11 +62,13 @@ local function saveStatsToFile(stats)
     end
 
     local jsonData = HttpService:JSONEncode(stats)
-    local file, err = io.open(fileName, "w")
-    if not file then
-        warn("Không thể mở tệp để ghi: " .. tostring(err))
-        return nil
-    end
+    local file, err
+    repeat
+        file, err = io.open(fileName, "w")
+        if not file then
+            warn("Không thể mở tệp để ghi: " .. tostring(err))
+        end
+    until file
 
     local success, err = pcall(function()
         file:write(jsonData)
