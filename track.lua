@@ -25,12 +25,12 @@ end
 
 -- Hàm tạo thư mục và lưu thông tin vào tệp JSON
 local function saveStatsToFile(stats)
-    local folderName = "MPhuc_stat"
-    local fileName = folderName .. "/" .. stats.AccountName .. ".json"
+    local folderPath = "/storage/emulated/0/MPhuc_stat"
+    local fileName = folderPath .. "/" .. stats.AccountName .. ".json"
     
     -- Tạo thư mục nếu chưa tồn tại
-    if not isfolder(folderName) then
-        makefolder(folderName)
+    if not isfolder(folderPath) then
+        makefolder(folderPath)
     end
 
     local jsonData = game:GetService("HttpService"):JSONEncode(stats)
