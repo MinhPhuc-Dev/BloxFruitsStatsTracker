@@ -30,7 +30,13 @@ local function saveStatsToFile(stats)
     
     -- Tạo thư mục nếu chưa tồn tại
     if not isfolder(folderPath) then
-        makefolder(folderPath)
+        local success, err = pcall(function()
+            makefolder(folderPath)
+        end)
+        if not success then
+            warn("Không thể tạo thư mục: " .. err)
+            return nil
+        end
     end
 
     local jsonData = game:GetService("HttpService"):JSONEncode(stats)
