@@ -1,4 +1,4 @@
-local json = require("json")
+local HttpService = game:GetService("HttpService")
 
 -- Hàm đọc tệp JSON
 local function readJsonFile(filePath)
@@ -11,7 +11,7 @@ local function readJsonFile(filePath)
     local content = file:read("*all")
     file:close()
 
-    local data, pos, err = json.decode(content, 1, nil)
+    local data, pos, err = HttpService:JSONDecode(content)
     if err then
         warn("Lỗi khi phân tích tệp JSON: " .. err)
         return nil
@@ -59,10 +59,8 @@ local function saveStatsToFile(stats)
         end
     end
 
-    local jsonData = game:GetService("HttpService"):JSONEncode(stats)
-    local file, err = pcall(function()
-        return io.open(fileName, "w")
-    end)
+    local jsonData = HttpService:JSONEncode(stats)
+    local file, err = io.open(fileName, "w")
     if not file then
         warn("Không thể mở tệp để ghi: " .. tostring(err))
         return nil
@@ -82,9 +80,7 @@ local function sendFileToWebhook(fileName)
     end
 
     local webhookUrl = "https://discord.com/api/webhooks/1285079613281931316/b-kuGNqwAx4PkFDSXNBlxt9t8Fy3QLmVYkxg7rtmroMMq_z-OIw3_JHvIqdgMLfDY4zZ"
-    local file, err = pcall(function()
-        return io.open(fileName, "r")
-    end)
+    local file, err = io.open(fileName, "r")
     if not file then
         warn("Không thể mở tệp để đọc: " .. tostring(err))
         return
@@ -101,9 +97,9 @@ local function sendFileToWebhook(fileName)
         }}
     }
 
-    local jsonData = game:GetService("HttpService"):JSONEncode(data)
+    local jsonData = HttpService:JSONEncode(data)
     local success, response = pcall(function()
-        return game:GetService("HttpService"):PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+        return HttpService:PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
     end)
 
     if not success then
