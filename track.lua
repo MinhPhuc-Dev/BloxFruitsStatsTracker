@@ -1,4 +1,3 @@
--- Lấy các service cần thiết
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
@@ -8,31 +7,29 @@ local function getPlayerStats()
     return {
         AccountName = player.Name,
         UserId = player.UserId,
-        Score = 100 -- Đây là điểm số ví dụ, bạn có thể thay đổi theo ý muốn
+        Score = 100 -- Điểm số giả định
     }
 end
 
--- Hàm gửi thông tin đến webhook Discord
+-- Hàm gửi thông tin đến Webhook.site
 local function sendToWebhook(stats)
-    local webhookUrl = "https://discord.com/api/webhooks/1285247042230157437/WD8AGGxsVjswhx82mNf4spBFg5FmL-UkaQBAyOF2V4_zpUUQTL4cDUO0a6lkXfsvJKYZ"
-    local embed = {
-        ["title"] = "Thông tin người chơi",
-        ["description"] = "Tên tài khoản: " .. stats.AccountName .. "\nID Người dùng: " .. stats.UserId .. "\nĐiểm số: " .. stats.Score,
-        ["color"] = 0x00FF00
-    }
+    -- URL Webhook.site mà bạn đã lấy ở Bước 1
+    local proxyUrl = "https://webhook.site/xxxx-xxxx-xxxx-xxxx" -- Thay bằng URL Webhook.site của bạn
     local data = {
-        ["embeds"] = { embed }
+        ["AccountName"] = stats.AccountName,
+        ["UserId"] = stats.UserId,
+        ["Score"] = stats.Score
     }
 
-    -- Gửi dữ liệu bằng PostAsync
+    -- Gửi yêu cầu POST tới Webhook.site
     local success, response = pcall(function()
-        return HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+        return HttpService:PostAsync(proxyUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
     end)
 
     if success then
-        print("Đã gửi thông tin đến Discord.")
+        print("Đã gửi thông tin đến Webhook.site.")
     else
-        warn("Lỗi khi gửi thông tin đến Discord: " .. tostring(response))
+        warn("Lỗi khi gửi thông tin đến Webhook.site: " .. tostring(response))
     end
 end
 
