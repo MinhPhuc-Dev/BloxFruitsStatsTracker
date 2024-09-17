@@ -1,53 +1,41 @@
+-- Lấy các service cần thiết
 local HttpService = game:GetService("HttpService")
-local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 
--- Thay thế getPlayerStats() bằng cách lấy dữ liệu người chơi thực tế
-local function getPlayerStats(player)
+-- Hàm lấy thông tin người chơi
+local function getPlayerStats()
+    local player = Players.LocalPlayer
     return {
         AccountName = player.Name,
-        Score = 100 -- Ví dụ điểm số, thay đổi theo dữ liệu thực tế
+        UserId = player.UserId,
+        Score = 100 -- Đây là điểm số ví dụ, bạn có thể thay đổi theo ý muốn
     }
 end
 
--- Hàm lưu thông tin vào DataStore
-local function saveStatsToDataStore(stats)
-    local dataStore = DataStoreService:GetDataStore("PlayerStatsDataStore")
-    local success, err = pcall(function()
-        dataStore:SetAsync(stats.AccountName, stats)
-    end)
-    if not success then
-        warn("Lỗi khi lưu dữ liệu vào DataStore: " .. tostring(err))
-        return nil
-    end
-    return stats.AccountName
-end
-
--- Hàm gửi thông tin đến webhook
+-- Hàm gửi thông tin đến webhook Discord
 local function sendToWebhook(stats)
     local webhookUrl = "https://discord.com/api/webhooks/1285247042230157437/WD8AGGxsVjswhx82mNf4spBFg5FmL-UkaQBAyOF2V4_zpUUQTL4cDUO0a6lkXfsvJKYZ"
     local embed = {
         ["title"] = "Thông tin người chơi",
-        ["description"] = "Tên tài khoản: " .. stats.AccountName .. "\nĐiểm số: " .. stats.Score,
+        ["description"] = "Tên tài khoản: " .. stats.AccountName .. "\nID Người dùng: " .. stats.UserId .. "\nĐiểm số: " .. stats.Score,
         ["color"] = 0x00FF00
     }
     local data = {
         ["embeds"] = { embed }
     }
-    local response = HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
-    if response then
+
+    -- Gửi dữ liệu bằng PostAsync
+    local success, response = pcall(function()
+        return HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+    end)
+
+    if success then
         print("Đã gửi thông tin đến Discord.")
     else
-        warn("Lỗi khi gửi thông tin đến Discord.")
+        warn("Lỗi khi gửi thông tin đến Discord: " .. tostring(response))
     end
 end
 
--- Thực thi chính
-local player = Players.LocalPlayer or Players:GetPlayers()[1] -- Thay đổi cách lấy người chơi theo nhu cầu
-local stats = getPlayerStats(player)
-local key = saveStatsToDataStore(stats)
-if key then
-    sendToWebhook(stats)
-else
-    warn("Không thể lưu thông tin người chơi vào DataStore.")
-end
+-- Thực thi
+local stats = getPlayerStats()
+sendToWebhook(stats)
